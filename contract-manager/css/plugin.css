@@ -1,0 +1,25 @@
+.verify-btn {
+    margin-left: 10px;
+    padding: 2px 8px;
+}
+
+.action-button {
+    margin-left: 5px;
+}
+
+.auth-btn {
+    background-color: #5cb85c !important;
+    border-color: #4cae4c !important;
+}
+
+.deny-btn {
+    background-color: #d9534f !important;
+    border-color: #d43f3a !important;
+}
+
+.btn.disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+    filter: alpha(opacity=65);
+    box-shadow: none;
+}
