@@ -3,14 +3,14 @@ declare(strict_types=1);
 
 namespace PrestaShop\Module\PsContractManager\Controller\Api;
 
-use PrestaShopBundle\Controller\Api\ApiController;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use PrestaShop\Module\PsContractManager\Infrastructure\Persistence\ContractRepository;
 
-class ContractApiController extends ApiController
+class ContractApiController extends AbstractController
 {
-    private $repository;
+    private ContractRepository $repository;
 
     public function __construct(ContractRepository $repository)
     {
@@ -26,9 +26,7 @@ class ContractApiController extends ApiController
             return new JsonResponse(['error' => 'Missing parameters'], 400);
         }
 
-        $contracts = $this->repository->findByVinAndCustomer($vin, (int)$customerId);
-
-        // Enrichment with residual value would happen here
+        $contracts = $this->repository->findActiveByVinAndCustomer($vin, (int)$customerId);
         return new JsonResponse($contracts);
     }
 
@@ -36,12 +34,15 @@ class ContractApiController extends ApiController
     {
         $data = json_decode($request->getContent(), true);
 
-        // Transactional logic:
-        // 1. Check residual value
-        // 2. Insert intervention
-        // 3. Update contract status if needed
+        if (!isset($data['contract_id'], $data['amount'])) {
+            return new JsonResponse(['error' => 'Missing data'], 400);
+        }
 
-        $success = $this->repository->saveIntervention($data);
+        $success = $this->repository->authorizeIntervention(
+            (int)$data['contract_id'],
+            (float)$data['amount'],
+            $data
+        );
 
         return new JsonResponse(['success' => $success]);
     }
