@@ -1,0 +1,15 @@
+{
+    "name": "prestashop/ps_contract_manager",
+    "description": "Contract and Intervention Management",
+    "type": "prestashop-module",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "PrestaShop\\Module\\PsContractManager\\": "src/"
+        }
+    },
+    "config": {
+        "prepend-autoloader": false
+    },
+    "type": "prestashop-module"
+}

@@ -1,0 +1,64 @@
+{% extends '@PrestaShop/Admin/layout.html.twig' %}
+
+{% block content %}
+<div class="card">
+    <h3 class="card-header"><i class="material-icons">list</i> Reporting Contratti</h3>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>ID</th>
+                    <th>VIN</th>
+                    <th>Cliente</th>
+                    <th>Valore Iniziale</th>
+                    <th>Valore Residuo</th>
+                    <th>Stato</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contract in contracts %}
+                <tr data-toggle="collapse" data-target="#interventions-{{ contract.id_contract }}" class="accordion-toggle">
+                    <td><i class="material-icons">expand_more</i></td>
+                    <td>{{ contract.id_contract }}</td>
+                    <td>{{ contract.vin }}</td>
+                    <td>{{ contract.customer_name }}</td>
+                    <td>{{ contract.initial_value }}€</td>
+                    <td>{{ contract.residual_value }}€</td>
+                    <td><span class="badge badge-info">{{ contract.status }}</span></td>
+                </tr>
+                <tr>
+                    <td colspan="7" class="hiddenRow">
+                        <div class="accordian-body collapse" id="interventions-{{ contract.id_contract }}">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Autorizzatore</th>
+                                        <th>Importo</th>
+                                        <th>Descrizione</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for intervention in contract.interventions %}
+                                    <tr>
+                                        <td>{{ intervention.date_add }}</td>
+                                        <td>{{ intervention.authorized_by }}</td>
+                                        <td>{{ intervention.value }}€</td>
+                                        <td>{{ intervention.description }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer">
+        <a href="{{ path('admin_contract_export', {'type': 'csv'}) }}" class="btn btn-secondary">Esporta CSV</a>
+    </div>
+</div>
+{% endblock %}
