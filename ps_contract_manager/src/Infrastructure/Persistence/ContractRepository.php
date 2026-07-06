@@ -70,4 +70,26 @@ class ContractRepository
             return false;
         }
     }
+
+    public function findAllWithInterventions(): array
+    {
+        $sql = "SELECT c.*, cu.firstname, cu.lastname,
+                (c.initial_value - COALESCE(SUM(i.value), 0)) as residual_value
+                FROM " . _DB_PREFIX_ . "ps_contract c
+                LEFT JOIN " . _DB_PREFIX_ . "ps_customer cu ON c.id_customer = cu.id_customer
+                LEFT JOIN " . _DB_PREFIX_ . "ps_intervention i ON c.id_contract = i.id_contract AND i.status = 'AUTHORIZED'
+                GROUP BY c.id_contract";
+
+        $contracts = Db::getInstance()->executeS($sql);
+
+        foreach ($contracts as &$contract) {
+            $contract['customer_name'] = $contract['firstname'] . ' ' . $contract['lastname'];
+            $contract['interventions'] = Db::getInstance()->executeS(
+                "SELECT * FROM " . _DB_PREFIX_ . "ps_intervention
+                 WHERE id_contract = " . (int)$contract['id_contract']
+            );
+        }
+
+        return $contracts;
+    }
 }

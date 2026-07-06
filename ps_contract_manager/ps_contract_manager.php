@@ -87,10 +87,44 @@ class PsContractManager extends Module
         }
     }
 
+
     public function hookActionOrderStatusPostUpdate($params)
     {
-        // To be implemented
+        $order = new Order((int)$params['id_order']);
+        $newStatus = $params['newOrderStatus'];
+
+        // If order status is "Payment accepted" (usually ID 2)
+        if ($newStatus->id == 2) {
+            $products = $order->getProducts();
+            foreach ($products as $product) {
+                // Check if product is a 'Contract' (e.g. by category or feature)
+                if ($this->isContractProduct((int)$product['product_id'])) {
+                    Db::getInstance()->insert('ps_contract', [
+                        'id_order' => (int)$order->id,
+                        'id_customer' => (int)$order->id_customer,
+                        'vin' => pSQL($this->getVinFromOrder($order, $product)),
+                        'initial_value' => (float)$product['total_price_tax_excl'],
+                        'status' => 'ACTIVE',
+                        'date_add' => date('Y-m-d H:i:s'),
+                    ]);
+                }
+            }
+        }
     }
+
+    private function isContractProduct(int $productId): bool
+    {
+        // For simplicity, assume all virtual products are contracts
+        $product = new Product($productId);
+        return (bool)$product->is_virtual;
+    }
+
+    private function getVinFromOrder($order, $product): string
+    {
+        // In a real scenario, VIN would be a customization field or order property
+        return "SIMULATEDVIN12345";
+    }
+
 
     public function getContent()
     {

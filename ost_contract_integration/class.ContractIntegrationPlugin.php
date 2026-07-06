@@ -17,7 +17,13 @@ class ContractIntegrationPlugin extends Plugin {
 
     function handleAjax($dispatcher) {
         $dispatcher->append(
-            url_get('^/ps-integration', function($matches) {
+
+            url_get('^/users/sync$', function($matches) {
+                require_once('class.UserSyncHandler.php');
+                $handler = new UserSyncHandler();
+                $handler->handleSync();
+            }),
+\n            url_get('^/ps-integration', function($matches) {
                 require_once('class.AjaxHandler.php');
                 $handler = new AjaxHandler($this->getConfig());
                 $action = $_REQUEST['a'];
