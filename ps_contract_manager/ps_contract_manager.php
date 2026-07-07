@@ -42,7 +42,15 @@ class PsContractManager extends Module
     private function createTables()
     {
         $sqls = [
-                        "CREATE TABLE IF NOT EXISTS `" . _DB_PREFIX_ . "ps_contract_audit_log` (\n                `id_audit` INT AUTO_INCREMENT PRIMARY KEY,\n                `operation` VARCHAR(255),\n                `id_user` INT,\n                `data_before` TEXT,\n                `data_after` TEXT,\n                `date_add` DATETIME\n            ) ENGINE=" . _MYSQL_ENGINE_ . " DEFAULT CHARSET=utf8;",\n            "CREATE TABLE IF NOT EXISTS `" . _DB_PREFIX_ . "ps_contract` (
+            "CREATE TABLE IF NOT EXISTS `" . _DB_PREFIX_ . "ps_contract_audit_log` (
+                `id_audit` INT AUTO_INCREMENT PRIMARY KEY,
+                `operation` VARCHAR(255),
+                `id_user` INT,
+                `data_before` TEXT,
+                `data_after` TEXT,
+                `date_add` DATETIME
+            ) ENGINE=" . _MYSQL_ENGINE_ . " DEFAULT CHARSET=utf8;",
+            "CREATE TABLE IF NOT EXISTS `" . _DB_PREFIX_ . "ps_contract` (
                 `id_contract` INT AUTO_INCREMENT PRIMARY KEY,
                 `id_order` INT NOT NULL,
                 `id_customer` INT NOT NULL,
@@ -87,17 +95,14 @@ class PsContractManager extends Module
         }
     }
 
-
     public function hookActionOrderStatusPostUpdate($params)
     {
         $order = new Order((int)$params['id_order']);
         $newStatus = $params['newOrderStatus'];
 
-        // If order status is "Payment accepted" (usually ID 2)
         if ($newStatus->id == 2) {
             $products = $order->getProducts();
             foreach ($products as $product) {
-                // Check if product is a 'Contract' (e.g. by category or feature)
                 if ($this->isContractProduct((int)$product['product_id'])) {
                     Db::getInstance()->insert('ps_contract', [
                         'id_order' => (int)$order->id,
@@ -114,17 +119,14 @@ class PsContractManager extends Module
 
     private function isContractProduct(int $productId): bool
     {
-        // For simplicity, assume all virtual products are contracts
         $product = new Product($productId);
         return (bool)$product->is_virtual;
     }
 
     private function getVinFromOrder($order, $product): string
     {
-        // In a real scenario, VIN would be a customization field or order property
         return "SIMULATEDVIN12345";
     }
-
 
     public function getContent()
     {

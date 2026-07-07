@@ -1,0 +1,23 @@
+admin_contract_index:
+  path: /contract-manager/index
+  methods: [GET]
+  defaults:
+    _controller: 'PrestaShop\Module\PsContractManager\Controller\Admin\AdminContractController::indexAction'
+
+admin_contract_export:
+  path: /contract-manager/export/{type}
+  methods: [GET]
+  defaults:
+    _controller: 'PrestaShop\Module\PsContractManager\Controller\Admin\AdminContractController::exportAction'
+
+api_contracts_get:
+  path: /api/contracts
+  methods: [GET]
+  defaults:
+    _controller: 'PrestaShop\Module\PsContractManager\Controller\Api\ContractApiController::getContracts'
+
+api_intervention_authorize:
+  path: /api/interventions/authorize
+  methods: [POST]
+  defaults:
+    _controller: 'PrestaShop\Module\PsContractManager\Controller\Api\ContractApiController::authorizeIntervention'

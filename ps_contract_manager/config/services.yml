@@ -1,0 +1,18 @@
+services:
+  _defaults:
+    public: true
+    autowire: true
+    autoconfigure: true
+
+  PrestaShop\Module\PsContractManager\Infrastructure\Persistence\ContractRepository: ~
+  PrestaShop\Module\PsContractManager\Infrastructure\Service\ExportService: ~
+  PrestaShop\Module\PsContractManager\Infrastructure\Service\AuditLogger: ~
+  PrestaShop\Module\PsContractManager\Infrastructure\Service\OsTicketSyncService: ~
+
+  PrestaShop\Module\PsContractManager\Controller\Admin\AdminContractController:
+    autowire: true
+    tags: ['controller.service_arguments']
+
+  PrestaShop\Module\PsContractManager\Controller\Api\ContractApiController:
+    autowire: true
+    tags: ['controller.service_arguments']
